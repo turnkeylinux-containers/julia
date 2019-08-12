@@ -1,0 +1,20 @@
+#!/bin/bash
+set -exuo pipefail
+
+declare -r julia_gpg="3673DF529D9049477F76B37566E3C7DC03D6E495"
+
+declare -r SHA256="f0a83a139a89a2ccf2316814e5ee1c0c809fca02cbaf4baf3c1fd8eb71594f06"
+
+declare -r JULIA_PATH=/usr/local/julia
+
+folder=$(echo "$PRODUCT_VERSION" | cut -d. -f1-2)
+
+curl -fL -o julia.tar.gz "https://julialang-s3.julialang.org/bin/linux/x64/${folder}/julia-${PRODUCT_VERSION}-linux-x86_64.tar.gz"
+
+echo "${SHA256} *julia.tar.gz" | sha256sum -c -
+
+mkdir "$JULIA_PATH"
+tar -xzf julia.tar.gz -C "$JULIA_PATH" --strip-components 1
+rm julia.tar.gz
+
+julia --version
